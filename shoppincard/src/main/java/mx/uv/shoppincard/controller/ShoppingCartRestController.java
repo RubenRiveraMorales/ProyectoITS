@@ -46,7 +46,7 @@ public class ShoppingCartRestController {
 
     private Logger logger = LoggerFactory.getLogger(ShoppingCartRestController.class);
 
-    @GetMapping(value = "/getAllProducts")
+    @GetMapping(value = "/Platillos")
     public ResponseEntity<List<Product>> getAllProducts() {
 
         List<Product> productList = productService.getAllProducts();
@@ -54,7 +54,7 @@ public class ShoppingCartRestController {
         return ResponseEntity.ok(productList);
     }
 
-    @GetMapping(value = "/getOrder/{orderId}")
+    @GetMapping(value = "/ordenes/{orderId}")
     public ResponseEntity<Order> getOrderDetails(@PathVariable int orderId) {
 
         Order order = orderService.getOrderDetail(orderId);
@@ -62,7 +62,7 @@ public class ShoppingCartRestController {
     }
 
 
-    @PostMapping("/placeOrder")
+    @PostMapping("/realizaPedido")
     public ResponseEntity<ResponseOrderDTO> placeOrder(@RequestBody OrderDTO orderDTO) {
         logger.info("Request Payload " + orderDTO.toString());
         ResponseOrderDTO responseOrderDTO = new ResponseOrderDTO();
@@ -72,14 +72,14 @@ public class ShoppingCartRestController {
         Integer customerIdFromDb = customerService.isCustomerPresent(customer);
         if (customerIdFromDb != null) {
             customer.setId(customerIdFromDb);
-            logger.info("Customer already present in db with id : " + customerIdFromDb);
+            logger.info("Cliente ya existente con id  :  " + customerIdFromDb);
         }else{
             customer = customerService.saveCustomer(customer);
-            logger.info("Customer saved.. with id : " + customer.getId());
+            logger.info("Cliente guardado con ID : " + customer.getId());
         }
         Order order = new Order(orderDTO.getOrderDescription(), customer, orderDTO.getCartItems());
         order = orderService.saveOrder(order);
-        logger.info("Order processed successfully..");
+        logger.info("Orden realizada exitosamente..");
 
         responseOrderDTO.setAmount(amount);
         responseOrderDTO.setDate(DateUtil.getCurrentDateTime());
@@ -87,7 +87,7 @@ public class ShoppingCartRestController {
         responseOrderDTO.setOrderId(order.getId());
         responseOrderDTO.setOrderDescription(orderDTO.getOrderDescription());
 
-        logger.info("test push..");
+        logger.info("test ..");
 
         return ResponseEntity.ok(responseOrderDTO);
     }
